@@ -1,16 +1,22 @@
-package com.udacity.asteroidradar.api
+package me.bigad.asteroidradar.api
 
-import me.bigad.asteroidradar.datamodel.Asteroid
-import com.udacity.asteroidradar.Constants
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
+import me.bigad.asteroidradar.database.DatabaseAsteroid
+import me.bigad.asteroidradar.database.DatabasePhotoOfDay
+import me.bigad.asteroidradar.domain.Asteroid
+import me.bigad.asteroidradar.domain.Constants
+import me.bigad.asteroidradar.domain.PhotoOfDay
 import org.json.JSONObject
+import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.ArrayList
 
-fun parseAsteroidsJsonResult(jsonResult: JSONObject): ArrayList<Asteroid> {
+
+fun parseAsteroidsJsonResult(jsonResult: JSONObject): ArrayList<NetworkAsteroid> {
     val nearEarthObjectsJson = jsonResult.getJSONObject("near_earth_objects")
 
-    val asteroidList = ArrayList<Asteroid>()
+    val asteroidList = ArrayList<NetworkAsteroid>()
 
     val nextSevenDaysFormattedDates = getNextSevenDaysFormattedDates()
     for (formattedDate in nextSevenDaysFormattedDates) {
@@ -34,8 +40,10 @@ fun parseAsteroidsJsonResult(jsonResult: JSONObject): ArrayList<Asteroid> {
                 val isPotentiallyHazardous = asteroidJson
                     .getBoolean("is_potentially_hazardous_asteroid")
 
-                val asteroid = Asteroid(id, codename, formattedDate, absoluteMagnitude,
-                    estimatedDiameter, relativeVelocity, distanceFromEarth, isPotentiallyHazardous)
+                val asteroid = NetworkAsteroid(
+                    id, codename, formattedDate, absoluteMagnitude,
+                    estimatedDiameter, relativeVelocity, distanceFromEarth, isPotentiallyHazardous
+                )
                 asteroidList.add(asteroid)
             }
         }
@@ -44,16 +52,89 @@ fun parseAsteroidsJsonResult(jsonResult: JSONObject): ArrayList<Asteroid> {
     return asteroidList
 }
 
+
 private fun getNextSevenDaysFormattedDates(): ArrayList<String> {
     val formattedDateList = ArrayList<String>()
 
     val calendar = Calendar.getInstance()
     for (i in 0..Constants.DEFAULT_END_DATE_DAYS) {
         val currentTime = calendar.time
-        val dateFormat = SimpleDateFormat(Constants.API_QUERY_DATE_FORMAT, Locale.getDefault())
-        formattedDateList.add(dateFormat.format(currentTime))
+
+
+        formattedDateList.add(Constants.dateFormat.format(currentTime))
         calendar.add(Calendar.DAY_OF_YEAR, 1)
     }
 
     return formattedDateList
+}
+
+data class NetworkAsteroid(
+    val id: Long, val codename: String, val closeApproachDate: String,
+    val absoluteMagnitude: Double, val estimatedDiameter: Double,
+    val relativeVelocity: Double, val distanceFromEarth: Double,
+    val isPotentiallyHazardous: Boolean
+)
+
+data class NetworkAsteroidContainer(val asteroids: List<NetworkAsteroid> = listOf())
+
+//convert server response to Network Asteroid Object
+fun String.asNetworkModel(): NetworkAsteroidContainer {
+    if (this.isNotEmpty()) {
+        val obj = JSONObject(this)
+        val parsedAstroids = parseAsteroidsJsonResult(obj)
+        return NetworkAsteroidContainer(parsedAstroids)
+    }
+    return NetworkAsteroidContainer()
+
+}
+
+//convert server response to Domain object in case of load data from network
+fun NetworkAsteroidContainer.asDomainModel(): List<Asteroid> {
+    return asteroids.map {
+        Asteroid(
+            id = it.id,
+            codename = it.codename,
+            closeApproachDate = it.closeApproachDate,
+            absoluteMagnitude = it.absoluteMagnitude,
+            estimatedDiameter = it.estimatedDiameter,
+            relativeVelocity = it.relativeVelocity,
+            distanceFromEarth = it.distanceFromEarth,
+            isPotentiallyHazardous = it.isPotentiallyHazardous
+        )
+    }
+}
+//convert server response to Database object
+fun NetworkAsteroidContainer.asDatabaseModel(): Array<DatabaseAsteroid> {
+    Timber.w(this.asteroids.get(0).toString())
+    return asteroids.map {
+        DatabaseAsteroid(
+            id = it.id,
+            codename = it.codename,
+            closeApproachDate = it.closeApproachDate,
+            absoluteMagnitude = it.absoluteMagnitude,
+            estimatedDiameter = it.estimatedDiameter,
+            relativeVelocity = it.relativeVelocity,
+            distanceFromEarth = it.distanceFromEarth,
+            isPotentiallyHazardous = it.isPotentiallyHazardous
+        )
+
+    }.toTypedArray()
+}
+
+@JsonClass(generateAdapter = true)
+data class NetworkPhotoOfDay(
+    @Json(name = "media_type") val mediaType: String, val title: String,
+    val url: String
+)
+
+fun NetworkPhotoOfDay.asDatabaseModel(): DatabasePhotoOfDay {
+    return DatabasePhotoOfDay(
+        url = url,
+        mediaType = mediaType,
+        title = title
+    )
+}
+
+fun NetworkPhotoOfDay.asDomainModel(): PhotoOfDay {
+    return PhotoOfDay(mediaType, title, url)
 }

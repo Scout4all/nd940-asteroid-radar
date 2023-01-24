@@ -1,39 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
     <data>
+
         <variable
-            name="viewModel"
-            type="me.bigad.asteroidradar.screens.main.MainViewModel" />
+            name="asteroid"
+            type="me.bigad.asteroidradar.domain.Asteroid" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/spacing_small"
+
+        android:paddingBottom="@dimen/spacing_small">
 
         <TextView
             android:id="@+id/asteroid_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/app_name"
-            android:textColor="@color/colorAccent"
+            android:text="@{asteroid.codename}"
+            android:textAlignment="viewStart"
+            android:textColor="@color/default_text_color"
+            android:textSize="@dimen/font_size_big"
+            android:textStyle="bold"
             app:layout_constraintEnd_toStartOf="@+id/imageView"
-
             app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintHorizontal_chainStyle="spread"
+            app:layout_constraintStart_toStartOf="@id/start_grid"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="@string/app_name" />
+
+        <TextView
+            android:id="@+id/asteroid_date"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_small"
+            android:text="@{asteroid.closeApproachDate}"
+            android:textColor="@color/text_grey"
+            android:textSize="@dimen/font_size_normal"
+            app:layout_constraintStart_toStartOf="@id/start_grid"
+            app:layout_constraintTop_toBottomOf="@id/asteroid_name"
+            tools:text="2020-12-20" />
 
         <ImageView
             android:id="@+id/imageView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:src="@color/potentially_hazardous"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.10"
-            app:layout_constraintStart_toEndOf="@+id/asteroid_name"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/end_grid"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_status_potentially_hazardous">
+            app:statusIcon="@{asteroid.potentiallyHazardous}"
+            tools:srcCompat="@drawable/ic_status_potentially_hazardous" />
 
-        </ImageView>
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/start_grid"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="@dimen/spacing_normal" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/end_grid"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="@dimen/spacing_normal" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
