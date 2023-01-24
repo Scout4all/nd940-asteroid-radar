@@ -10,7 +10,6 @@ import me.bigad.asteroidradar.api.Network
 import me.bigad.asteroidradar.api.asDatabaseModel
 import me.bigad.asteroidradar.api.asNetworkModel
 import me.bigad.asteroidradar.database.AppDatabase
-import me.bigad.asteroidradar.database.DatabaseAsteroid
 import me.bigad.asteroidradar.database.asDomainModel
 import me.bigad.asteroidradar.domain.Asteroid
 import me.bigad.asteroidradar.domain.Constants
@@ -26,12 +25,15 @@ class AsteroidRepository(val database: AppDatabase) {
     val status: LiveData<ApiStatus>
         get() = _status
 
-//load asteroid list form database
-    val asteroids: LiveData<List<Asteroid>> = Transformations.map(database.asteroidsDao.getAllAsteroids()) {
+    //load asteroid list form database
+    private val _asteroidFullList = Transformations.map(database.asteroidsDao.getAllAsteroids()) {
         it.asDomainModel()
-    }
+    } as MutableLiveData<List<Asteroid>>
+    private val _asteroidList = _asteroidFullList
 
-//load photo of day and insert it in to database
+    val asteroids: LiveData<List<Asteroid>> = _asteroidList
+
+    //load photo of day and insert it in to database
     val photoOfDay: LiveData<PhotoOfDay> =
         Transformations.map(database.asteroidsDao.getPhotoOfDay()) {
             it?.asDomainModel()
@@ -48,16 +50,16 @@ class AsteroidRepository(val database: AppDatabase) {
             // make network call to get apo data
             try {
                 val asteroidApiCall = Network.apiCall.getAsteroids(Constants.TODAY_DATE)
-               val netAsteroidListToDb =  asteroidApiCall.asNetworkModel().asDatabaseModel()
+                val netAsteroidListToDb = asteroidApiCall.asNetworkModel().asDatabaseModel()
 
                 database.asteroidsDao.insert(*netAsteroidListToDb)
                 _status.postValue(ApiStatus.DONE)
             } catch (e: Exception) {
                 if (e.message == "timeout") {
                     //retry send request if request time out
-                    if( refreshRunTimes < 1) {
+                    if (refreshRunTimes < 1) {
                         refreshPhotoOfDay()
-                    }else{
+                    } else {
                         if (_status.value != ApiStatus.DONE) {
                             _status.postValue(ApiStatus.ERROR)
                         }
@@ -89,5 +91,14 @@ class AsteroidRepository(val database: AppDatabase) {
         }
     }
 
+    fun loadToday() {
+        _asteroidList.value = _asteroidFullList.value?.filter { allAsteroids ->
+            allAsteroids.closeApproachDate.contentEquals(Constants.TODAY_DATE)
+        }
+    }
+
+    fun loadAll() {
+        _asteroidList.value = _asteroidFullList.value
+    }
 
 }

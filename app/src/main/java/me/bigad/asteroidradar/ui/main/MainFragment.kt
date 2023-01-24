@@ -92,6 +92,12 @@ class MainFragment : Fragment(), MenuProvider {
         viewModel.searchForToday()
                 return true
             }
+            R.id.show_all_menu->{
+                viewModel.showWeekAsteroids()
+            }
+            R.id.show_saved_asteroids_menu->{
+                viewModel.loadOnlineData()
+            }
         }
         return false
     }

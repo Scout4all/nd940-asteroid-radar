@@ -6,10 +6,8 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import me.bigad.asteroidradar.database.getDatabase
 import me.bigad.asteroidradar.domain.Asteroid
-import me.bigad.asteroidradar.domain.Constants
 import me.bigad.asteroidradar.repository.ApiStatus
 import me.bigad.asteroidradar.repository.AsteroidRepository
-import timber.log.Timber
 
 class MainViewModel(application: Application) : ViewModel() {
 
@@ -33,7 +31,7 @@ class MainViewModel(application: Application) : ViewModel() {
 
     private val _asteroidFullList: MutableLiveData<List<Asteroid>> =
         asteroidRepository.asteroids as MutableLiveData<List<Asteroid>>
-    private val _asteroidList: MutableLiveData<List<Asteroid>> =_asteroidFullList
+    private val _asteroidList: MutableLiveData<List<Asteroid>> = _asteroidFullList
     val asteroidList: LiveData<List<Asteroid>> = _asteroidList
 
 
@@ -56,11 +54,17 @@ class MainViewModel(application: Application) : ViewModel() {
     }
 
     fun searchForToday() {
-        _asteroidList.value = Transformations.map(_asteroidList){ asteroid ->
-            asteroid.filter {
-                Timber.e(it.closeApproachDate + " " + Constants.TODAY_DATE )
-               ! it.closeApproachDate.isNullOrBlank()
-            }
-        }.value
+        asteroidRepository.loadToday()
+    }
+
+    fun showWeekAsteroids() {
+        asteroidRepository.loadAll()
+    }
+
+    fun loadOnlineData() {
+        viewModelScope.launch {
+            asteroidRepository.refreshAsteroids()
+        }
+
     }
 }
