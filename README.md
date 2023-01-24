@@ -17,6 +17,16 @@ This app to submit for training at my nanodegree program
 - using data binding 
 
 
+##Note 
+**please change api key at to your api key
+```bash
+  java/me/bigad/asteroidradar/Constants.class
+```
+
+```bash
+   const val API_KEY = "DEMO_KEY" 
+```
+ 
 
 
 ## Screenshots
