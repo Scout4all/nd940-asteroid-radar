@@ -90,7 +90,12 @@ class AsteroidRepository(val database: AppDatabase) {
             }
         }
     }
-
+suspend fun deleteDailyAsteroids(date : String){
+    withContext(Dispatchers.IO){
+        database.asteroidsDao.deleteOldData(date)
+        database.asteroidsDao.deletePhotos()
+    }
+}
     fun loadToday() {
         _asteroidList.value = _asteroidFullList.value?.filter { allAsteroids ->
             allAsteroids.closeApproachDate.contentEquals(Constants.TODAY_DATE)

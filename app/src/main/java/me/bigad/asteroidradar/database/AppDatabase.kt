@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 
 
 @Database(
-    entities = [DatabaseAsteroid::class, DatabasePhotoOfDay::class],
+    entities = [EntityAsteroid::class, EntityPhotoOfDay::class],
     version = 1,
     exportSchema = false
 )

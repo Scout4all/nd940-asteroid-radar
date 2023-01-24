@@ -4,8 +4,10 @@ import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import me.bigad.asteroidradar.database.getDatabase
+import me.bigad.asteroidradar.domain.Constants
 import me.bigad.asteroidradar.repository.AsteroidRepository
 import retrofit2.HttpException
+import java.util.*
 
 class RefreshDataWorker(appContext: Context, params: WorkerParameters) :
     CoroutineWorker(appContext, params) {
@@ -23,9 +25,12 @@ class RefreshDataWorker(appContext: Context, params: WorkerParameters) :
     override suspend fun doWork(): Result {
         val database = getDatabase(applicationContext)
         val repository = AsteroidRepository(database)
+      val yesterday =  Constants.calendar.add(Calendar.DAY_OF_YEAR, -1)
+        val formattedYesterday = Constants.dateFormat.format(yesterday)
         return try {
             repository.refreshAsteroids()
             repository.refreshPhotoOfDay()
+            repository.deleteDailyAsteroids(formattedYesterday)
             Result.success()
         } catch (e: HttpException) {
             Result.retry()

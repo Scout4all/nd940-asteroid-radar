@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 import me.bigad.asteroidradar.domain.Asteroid
 
 @Entity(tableName = "asteroid")
-data class DatabaseAsteroid(
+data class EntityAsteroid(
     @PrimaryKey
     val id: Long,
     val codename: String,
@@ -19,7 +19,7 @@ data class DatabaseAsteroid(
 )
 
 //convert database response to Domain object
-fun List<DatabaseAsteroid>.asDomainModel(): List<Asteroid> {
+fun List<EntityAsteroid>.asDomainModel(): List<Asteroid> {
     return map {
         Asteroid(
             id = it.id,

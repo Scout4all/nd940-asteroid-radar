@@ -20,9 +20,10 @@ class DetailFragment : Fragment() {
 
         if (getArguments() != null) {
             val args = DetailFragmentArgs.fromBundle(requireArguments())
-            val asteroid = args.selectedAsteroid
 
-            if (asteroid != null) {
+
+            if ( args.selectedAsteroid != null) {
+                val asteroid =args.selectedAsteroid
                 binding.asteroid = asteroid
                 binding.asteridDataContainer?.visibility = View.VISIBLE
                 binding.noAsterid?.visibility = View.GONE

@@ -17,13 +17,13 @@ import java.util.*
 interface NetworkService {
     @GET("neo/rest/v1/feed")
     suspend fun getAsteroids(
-        @Query("start_date") startDate: String
-    ): String
+        @Query("start_date") startDate: String): String
 
     @GET("planetary/apod")
     suspend fun getPhotoOfDay(): NetworkPhotoOfDay
 }
 
+//add api key over request
 val interceptor = Interceptor { chain ->
     val request = chain.request().newBuilder()
     val originalHttpUrl = chain.request().url()
@@ -33,8 +33,8 @@ val interceptor = Interceptor { chain ->
     chain.proceed(request.build())
 }
 
-//val builder = OkHttpClient.Builder().addInterceptor(interceptor).build()
-//
+
+//for http call debug
 fun log(): OkHttpClient.Builder {
     val logging: HttpLoggingInterceptor = HttpLoggingInterceptor()
 // set your desired log level

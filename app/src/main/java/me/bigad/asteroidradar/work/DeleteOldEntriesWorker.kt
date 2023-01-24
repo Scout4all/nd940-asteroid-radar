@@ -24,7 +24,7 @@ class DeleteOldEntriesWorker(appContext: Context, params: WorkerParameters) :
         val database = getDatabase(applicationContext)
         val repository = AsteroidRepository(database)
         return try {
-//           repository.deleteOldEntries()
+
             Result.success()
         } catch (e: HttpException) {
             Result.retry()

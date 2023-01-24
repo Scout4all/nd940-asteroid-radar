@@ -2,14 +2,13 @@ package me.bigad.asteroidradar.api
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
-import me.bigad.asteroidradar.database.DatabaseAsteroid
-import me.bigad.asteroidradar.database.DatabasePhotoOfDay
+import me.bigad.asteroidradar.database.EntityAsteroid
+import me.bigad.asteroidradar.database.EntityPhotoOfDay
 import me.bigad.asteroidradar.domain.Asteroid
 import me.bigad.asteroidradar.domain.Constants
 import me.bigad.asteroidradar.domain.PhotoOfDay
 import org.json.JSONObject
 import timber.log.Timber
-import java.text.SimpleDateFormat
 import java.util.*
 
 
@@ -104,10 +103,10 @@ fun NetworkAsteroidContainer.asDomainModel(): List<Asteroid> {
     }
 }
 //convert server response to Database object
-fun NetworkAsteroidContainer.asDatabaseModel(): Array<DatabaseAsteroid> {
+fun NetworkAsteroidContainer.asDatabaseModel(): Array<EntityAsteroid> {
     Timber.w(this.asteroids.get(0).toString())
     return asteroids.map {
-        DatabaseAsteroid(
+        EntityAsteroid(
             id = it.id,
             codename = it.codename,
             closeApproachDate = it.closeApproachDate,
@@ -127,8 +126,8 @@ data class NetworkPhotoOfDay(
     val url: String
 )
 
-fun NetworkPhotoOfDay.asDatabaseModel(): DatabasePhotoOfDay {
-    return DatabasePhotoOfDay(
+fun NetworkPhotoOfDay.asDatabaseModel(): EntityPhotoOfDay {
+    return EntityPhotoOfDay(
         url = url,
         mediaType = mediaType,
         title = title

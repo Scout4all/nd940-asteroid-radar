@@ -21,10 +21,13 @@
 
     <style name="TextAppearance.Big" parent="TextAppearance.VeryBig">
         <item name="android:textSize">@dimen/font_size_big</item>
+        <item name="android:layout_marginTop">@dimen/spacing_normal</item>
     </style>
 
     <style name="TextAppearance.Normal" parent="TextAppearance.VeryBig">
         <item name="android:textSize">@dimen/font_size_normal</item>
+        <item name="android:layout_marginTop">@dimen/spacing_very_small</item>
+
     </style>
 
     <style name="TextAppearance.SubNormal" parent="TextAppearance.VeryBig">

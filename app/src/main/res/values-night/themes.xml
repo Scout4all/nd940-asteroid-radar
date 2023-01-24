@@ -11,20 +11,4 @@
         <!-- Customize your theme here. -->
     </style>
 
-    <style name="TextAppearance.VeryBig" parent="TextAppearance.MaterialComponents.Body1">
-        <item name="android:textSize">@dimen/font_size_vey_big</item>
-        <item name="android:textColor">@color/default_text_color</item>
-    </style>
-
-    <style name="TextAppearance.Big" parent="TextAppearance.VeryBig">
-        <item name="android:textSize">@dimen/font_size_big</item>
-    </style>
-
-    <style name="TextAppearance.Normal" parent="TextAppearance.VeryBig">
-        <item name="android:textSize">@dimen/font_size_normal</item>
-    </style>
-
-    <style name="TextAppearance.SubNormal" parent="TextAppearance.VeryBig">
-        <item name="android:textSize">@dimen/font_size_small</item>
-    </style>
 </resources>
