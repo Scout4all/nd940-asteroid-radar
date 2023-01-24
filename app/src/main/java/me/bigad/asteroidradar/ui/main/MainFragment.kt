@@ -1,3 +1,12 @@
+/*
+ * Copyright (c) 2023.
+ *
+ *  Developed by : Bigad Aboubakr
+ *  Developer website : http://bigad.me
+ *  Developer github : https://github.com/Scout4all
+ *  Developer Email : bigad@bigad.me
+ */
+
 package me.bigad.asteroidradar.ui.main
 
 
@@ -41,28 +50,16 @@ class MainFragment : Fragment(), MenuProvider {
 
         val isTablet = context?.resources?.getBoolean(R.bool.isTablet)
         val navBuilder = NavOptions.Builder()
-        navBuilder.setEnterAnim(R.anim.slide_out_left).setExitAnim(R.anim.slide_in_right)
-            .setPopEnterAnim(R.anim.slide_out_left).setPopExitAnim(R.anim.slide_in_right)
-//ToDo load first row in tablet view
-        //ToDo figure why database not inserted in arabic
-        //ToDo handel find by date
-        //ToDo handel delete items yesterday worker
-        //ToDo fix tablet ui and make it better
-        //ToDo  let app load from network directly if error in database
-        //ToDo make common styles
-        //ToDo loading image
-        //ToDo no network image if no database entries
-        //ToDo add last update indicator like banknote
-        //ToDo  add delay 10 seconds
-        //ToDo clean code
-        //ToDo check if airplane mode
+        navBuilder.setEnterAnim(R.anim.fade_in).setExitAnim(R.anim.fade_out)
+            .setPopEnterAnim(R.anim.fade_in).setPopExitAnim(R.anim.fade_out)
+
         binding.asteroidRecycler.adapter = MainFragmentRecyclerAdapter(OnClickListener { asteroid ->
             when (isTablet) {
                 true -> {
                     val bundle = Bundle()
                     bundle.putParcelable(DetailFragment.selectedAsteroid, asteroid)
                     binding.itemDetailNavContainer?.findNavController()
-                        ?.navigate(R.id.detailFragmentControlled, bundle)
+                        ?.navigate(R.id.detailFragmentControlled, bundle,navBuilder.build())
                 }
                 else -> {
                     this.findNavController()

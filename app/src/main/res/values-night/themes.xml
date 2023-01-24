@@ -1,3 +1,12 @@
+<!--
+  ~ Copyright (c) 2023.
+  ~
+  ~  Developed by : Bigad Aboubakr
+  ~  Developer website : http://bigad.me
+  ~  Developer github : https://github.com/Scout4all
+  ~  Developer Email : bigad@bigad.me
+  -->
+
 <resources>
     <!-- Base application theme. -->
     <style name="Theme.AsteroidRadar" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
